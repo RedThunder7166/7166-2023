@@ -157,7 +157,12 @@ public final class Constants {
         public static final double LOW_SETPOINT = 29.0;
         public static final double INSIDE_SETPOINT = 2.0;
     }
+    public static final class TeleopSwerve {
+        public static final double CREEP_MODE_TRANSLATION_SPEED = 0.1;
+        public static final double CREEP_MODE_ROTATION_SPEED = 0.5;
 
+
+    }
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;

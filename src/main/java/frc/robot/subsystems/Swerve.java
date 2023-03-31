@@ -22,6 +22,8 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    private double teleopTranslationSpeed = 1;
+    private double teleopRotationSpeed = 1;
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -111,6 +113,29 @@ public class Swerve extends SubsystemBase {
             mod.resetToAbsolute();
         }
     }
+        /**
+     * Gets the translation speed to be multiplied for SwerveSubsystem.drive in the TeleopSwerve command
+     * @return teleopTranslationSpeed<double>
+     */
+    public double getTeleopTranslationSpeed() {
+        return teleopTranslationSpeed;
+    }
+    /**
+     * Gets the strafe speed to be multiplied for SwerveSubystem.drive in the TeleopSwerve command
+     * @return teleopStrafeSpeed<double>
+     */
+    public double getTeleopRotationSpeed() {
+        return teleopRotationSpeed;
+    }
+    public void enableCreepMode() {
+        teleopTranslationSpeed = Constants.TeleopSwerve.CREEP_MODE_TRANSLATION_SPEED;
+        teleopRotationSpeed = Constants.TeleopSwerve.CREEP_MODE_ROTATION_SPEED;
+        }
+        public void disableCreepMode() {
+        teleopTranslationSpeed = 1;
+        teleopRotationSpeed = 1;
+        }
+    
 
     @Override
     public void periodic(){
