@@ -40,10 +40,11 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
+    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-
-    private final POVButton inside = new POVButton(operator, 270);
+    private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kY.value);
+    /* Operator Buttons */
+    private final POVButton inside = new POVButton(operator, 270);//NOTE: This is the DPAD. 
     private final POVButton low = new POVButton(operator, 180);
     private final POVButton medium = new POVButton(operator, 90);
     private final POVButton high = new POVButton(operator, 0);
@@ -122,6 +123,10 @@ public class RobotContainer {
         new JoystickButton(operator, XboxController.Button.kB.value).whileTrue(
             new PlaceCone(s_Arm, s_Wrist, null)
         );
+        
+        creepModeButton.onTrue(new InstantCommand(() -> s_Swerve.enableCreepMode()));
+        creepModeButton.onFalse(new InstantCommand(() -> s_Swerve.disableCreepMode()));
+
     }
 
     /**
