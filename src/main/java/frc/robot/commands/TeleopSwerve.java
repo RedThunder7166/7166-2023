@@ -5,6 +5,7 @@ import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -33,7 +34,10 @@ public class TeleopSwerve extends CommandBase {
         /* Get Values, Deadband*/
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
-        double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
+        double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband) * s_Swerve.getTeleopRotationSpeed();
+
+        SmartDashboard.putNumber("Teleop TranslationVal: ", translationVal);
+        SmartDashboard.putNumber("RotationVal", rotationVal);
 
         /* Drive */
         s_Swerve.drive(

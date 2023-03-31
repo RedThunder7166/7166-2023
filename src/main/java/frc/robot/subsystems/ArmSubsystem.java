@@ -105,7 +105,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public static class Utils {
-        static ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);
+        static ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);//TODO needs to be tuned
 
         public static double angleToTicks (double angle) { return (angle * ((Constants.Arm.GEAR_RATIO * 2048) / 360)); }
 

@@ -141,7 +141,7 @@ public final class Constants {
 
     public static final class Wrist {
         public static final int MOTOR_ID = 28;
-        public static final double GEAR_RATIO = 28.0;
+        public static final double GEAR_RATIO = 100;
         public static final double FEED_FORWARD = 0.2;
     }
 
