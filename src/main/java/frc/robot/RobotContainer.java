@@ -3,8 +3,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.*;
@@ -24,9 +26,12 @@ import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.WristSubsystem.WristState;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -39,17 +44,24 @@ public class RobotContainer {
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+    /* Operator Contorls */
+    private final int wristManual = XboxController.Axis.kLeftY.value;
+    private final int armManual = XboxController.Axis.kRightY.value;
+
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kY.value);
     /* Operator Buttons */
-    private final POVButton inside = new POVButton(operator, 270);//NOTE: This is the DPAD. 
+    private final POVButton inside = new POVButton(operator, 270);// NOTE: This is the DPAD.
     private final POVButton low = new POVButton(operator, 180);
     private final POVButton medium = new POVButton(operator, 90);
     private final POVButton high = new POVButton(operator, 0);
-
-    public enum Location { LOW, MIDDLE, HIGH }
+    /* Autonomous Decider */
+    private final SendableChooser<String> autoDecider = new SendableChooser<>();
+    public enum Location {
+        LOW, MIDDLE, HIGH, NONE
+    }
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
@@ -57,73 +69,86 @@ public class RobotContainer {
     private final WristSubsystem s_Wrist = new WristSubsystem();
     private final IntakeSubsystem s_Intake = new IntakeSubsystem();
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
     public RobotContainer() {
+
+        autoDecider.addOption("The most undeniable superficial catastrophic name ever, exist", "Test 1");
+
+
+
         s_Swerve.setDefaultCommand(
-            new TeleopSwerve(
-                s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
-                () -> robotCentric.getAsBoolean()
-            )
-        );
+                new TeleopSwerve(
+                        s_Swerve,
+                        () -> -driver.getRawAxis(translationAxis),
+                        () -> -driver.getRawAxis(strafeAxis),
+                        () -> -driver.getRawAxis(rotationAxis),
+                        () -> robotCentric.getAsBoolean()
 
-        // s_Arm.setDefaultCommand(
-        //     new Manual(s_Arm, () -> operator.getRawAxis(translationAxis))
-        // );
-
-        // s_Wrist.setDefaultCommand(
-        //     new ManualWrist(s_Wrist, () -> operator.getRawAxis(XboxController.Axis.kRightY.value))
-        // );
+                ));
+        /* Manual modes */
+         s_Wrist.setDefaultCommand(new ManualWrist(s_Wrist, () -> -operator.getRawAxis(wristManual)));
+         s_Arm.setDefaultCommand(new Manual(s_Arm, () -> -operator.getRawAxis(armManual)));
 
         s_Intake.setDefaultCommand(
-            new StopIntake(s_Intake)
-        );
+                new StopIntake(s_Intake));
 
         // Configure the button bindings
         configureButtonBindings();
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be created by
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        inside.whileTrue(new GoToState(s_Arm, ArmState.INSIDE));
-        low.whileTrue(new GoToState(s_Arm, ArmState.LOW));
-        medium.whileTrue(new GoToState(s_Arm, ArmState.MEDIUM));
-        high.whileTrue(new GoToState(s_Arm, ArmState.HIGH));
 
-        new JoystickButton(operator, XboxController.Button.kY.value).whileTrue(
-            new GoToPosition(s_Wrist, WristState.OUT)
-        );
+        inside.onTrue(new SequentialCommandGroup(
+              //  new GoToPosition(s_Wrist, 20),
+                new GoToState(s_Arm, ArmState.INSIDE)));
 
-        new JoystickButton(operator, XboxController.Button.kA.value).whileTrue(
-            new GoToPosition(s_Wrist, WristState.DOWN)
-        );
+        low.onTrue(new SequentialCommandGroup(
+              //  new GoToPosition(s_Wrist, 20),
+                new GoToState(s_Arm, ArmState.LOW)));
+
+        medium.onTrue(
+              //  new GoToPosition(s_Wrist, 20),
+                new GoToState(s_Arm, ArmState.MEDIUM));
+
+        high.onTrue(new SequentialCommandGroup(
+              //  new GoToPosition(s_Wrist, 20),
+                new GoToState(s_Arm, ArmState.HIGH)));
+
+        // new JoystickButton(operator, XboxController.Button.kY.value).whileTrue(
+        // new GoToPosition(s_Wrist, WristState.OUT)
+        // );
+
+        // new JoystickButton(operator, XboxController.Button.kA.value).whileTrue(
+        // new GoToPosition(s_Wrist, WristState.DOWN)
+        // );
 
         new JoystickButton(operator, XboxController.Button.kLeftBumper.value).whileTrue(
-            // new Intake(s_Intake)
-            new Protect(s_Arm, s_Wrist)
-        );
+
+                new Intake(s_Intake));
 
         new JoystickButton(operator, XboxController.Button.kRightBumper.value).whileTrue(
-            new Outtake(s_Intake)
-        );
+                new Outtake(s_Intake));
 
-        new JoystickButton(operator, XboxController.Button.kX.value).whileTrue(
-            new PickupCone(s_Arm, s_Wrist, s_Intake)
-        );
+        // new JoystickButton(operator, XboxController.Button.kX.value).whileTrue(
+        // new PickupCone(s_Arm, s_Wrist, s_Intake)
+        // );
 
-        new JoystickButton(operator, XboxController.Button.kB.value).whileTrue(
-            new PlaceCone(s_Arm, s_Wrist, null)
-        );
-        
+        // new JoystickButton(operator, XboxController.Button.kB.value).whileTrue(
+        // new PlaceCone(s_Arm, s_Wrist, null)
+        // );
+
         creepModeButton.onTrue(new InstantCommand(() -> s_Swerve.enableCreepMode()));
         creepModeButton.onFalse(new InstantCommand(() -> s_Swerve.disableCreepMode()));
 
@@ -136,6 +161,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new RunEventfulAuto(s_Swerve, s_Arm, s_Wrist, s_Intake);
+        return new RunEventfulAuto(s_Swerve, s_Arm, s_Wrist, s_Intake, autoDecider.getSelected());
+    }
+
+    public void robotInit() {
+        new GoToState(s_Arm, s_Arm.getAngle()).schedule();
+
     }
 }
