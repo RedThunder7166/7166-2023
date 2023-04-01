@@ -15,7 +15,7 @@ public class PlaceCone extends ParallelCommandGroup {
     public PlaceCone (ArmSubsystem arm, WristSubsystem wrist, Location location) {
         addCommands(
             new GoToState(arm, ArmState.HIGH),
-            new GoToPosition(wrist, WristState.HALFWAY)
+            new GoToPosition(wrist, WristState.PLACE_HIGH)
         );
     }
 }

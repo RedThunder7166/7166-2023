@@ -6,6 +6,9 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,11 +18,10 @@ import frc.robot.Constants;
 
 public class WristSubsystem extends SubsystemBase {
     private TalonFX motor = new TalonFX(Constants.Wrist.MOTOR_ID);
-    public enum WristState { DOWN, PLACING, HALFWAY, OUT };
-
+    public enum WristState { TRANSPORT, LOW, PLACE_MID, PLACE_HIGH, GROUND_CONE };
+    private CANCoder wristCanDo = new CANCoder(Constants.Wrist.CANCODER_ID);
     private DigitalInput topSwitch = new DigitalInput(1);
     private DigitalInput bottomSwitch = new DigitalInput(2);
-
     public WristSubsystem () {
         motor.configFactoryDefault();
         motor.config_kP(0, 0.7);
@@ -32,6 +34,11 @@ public class WristSubsystem extends SubsystemBase {
         motor.configMotionCruiseVelocity(7000);
         motor.configMotionAcceleration(10000);
         motor.setSelectedSensorPosition(0);
+        wristCanDo.configFactoryDefault();
+        wristCanDo.configSensorDirection(false);
+        wristCanDo.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+        wristCanDo.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
+        wristCanDo.configMagnetOffset(Constants.Wrist.MAGNET_OFFSET);
 
         dashboard();
     }
@@ -50,12 +57,12 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void manualControl (double power) {
-        if (power > 0 && topSwitch.get()) {
+        if (power > 0 && bottomSwitch.get()) {
             motor.set(TalonFXControlMode.PercentOutput, power);
-        }
-
-        if (power < 0 && bottomSwitch.get()) {
+        } else if (power < 0 && topSwitch.get()) {
             motor.set(TalonFXControlMode.PercentOutput, power);
+        } else {
+            motor.set(TalonFXControlMode.PercentOutput, 0);
         }
     }
 
@@ -66,11 +73,13 @@ public class WristSubsystem extends SubsystemBase {
         tab.addBoolean("Bottom", () -> !bottomSwitch.get());
         tab.addDouble("Wrist Pos", () -> motor.getSelectedSensorPosition());
         tab.addDouble("Wrist Angle", () -> Utils.ticksToAngle(motor.getSelectedSensorPosition()));
+        tab.addDouble("Wrist Cancoder",() -> wristCanDo.getAbsolutePosition());
     }
 
     @Override
     public void periodic() {
-        
+        motor.setSelectedSensorPosition(Utils.angleToTicks(wristCanDo.getAbsolutePosition()));
+
     }
 
     public static class Utils {

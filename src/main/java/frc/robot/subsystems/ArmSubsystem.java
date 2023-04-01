@@ -17,7 +17,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private TalonFX leftMotor = new TalonFX(Constants.Arm.LEFT_MOTOR_ID);
     private TalonFX rightMotor = new TalonFX(Constants.Arm.RIGHT_MOTOR_ID);
-    public enum ArmState { INSIDE, LOW, MEDIUM, HIGH };
+    public enum ArmState { INSIDE, LOW, MEDIUM, HIGH, NONE };
     private ArmState state = ArmState.LOW;
 
     public ArmSubsystem () {
@@ -57,6 +57,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void goToState (ArmState state) {
         switch (state) {
+            case NONE:
+            break;
+
             case INSIDE:
                 setAngle(Constants.Arm.INSIDE_SETPOINT);
                 break;
@@ -93,6 +96,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         // determine arm state
         double angle = Utils.ticksToAngle(leftMotor.getSelectedSensorPosition());
+    
         if (angle >= Constants.Arm.HIGH_SETPOINT) {
             state = ArmState.HIGH;
         } else if (angle < Constants.Arm.HIGH_SETPOINT && angle >= Constants.Arm.MEDIUM_SETPOINT) {
@@ -103,6 +107,7 @@ public class ArmSubsystem extends SubsystemBase {
             state = ArmState.INSIDE;
         }
     }
+    
 
     public static class Utils {
         static ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);//TODO needs to be tuned
@@ -112,7 +117,7 @@ public class ArmSubsystem extends SubsystemBase {
         public static double ticksToAngle (double ticks) { return (ticks * 360) / (Constants.Arm.GEAR_RATIO * 2048); }
 
         public static double calculateFeedForward (double ticks) {
-            return Constants.Arm.FEED_FORWARD * Math.cos(
+            return Constants.Arm.FEED_FORWARD * Math.cos(//TODO double check on Sin Cos difference, I think this should be sin-Josef
                 Math.toRadians(ticksToAngle(ticks))
             );
             // return armFeedforward.calculate(position, velocity);

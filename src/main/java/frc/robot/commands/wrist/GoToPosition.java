@@ -8,34 +8,37 @@ public class GoToPosition extends CommandBase {
     private WristSubsystem wrist;
     private double position;
 
-    public GoToPosition (WristSubsystem wrist, double position) {
+    public GoToPosition(WristSubsystem wrist, double position) {
         this.wrist = wrist;
         addRequirements(wrist);
 
         this.position = position;
     }
 
-    public GoToPosition (WristSubsystem wrist, WristState state) {
+    public GoToPosition(WristSubsystem wrist, WristState state) {// TODO update values to negatives
         this.wrist = wrist;
         addRequirements(wrist);
 
         switch (state) {
-            case DOWN:
-                this.position = 100.0;
+            case TRANSPORT:
+                this.position = 20.0;
                 break;
 
-            case PLACING:
-                this.position = 80.0;
+            case LOW:
+                this.position = 70.0;
                 break;
 
-            case HALFWAY:
-                this.position = 50.0;
+            case PLACE_MID:
+                this.position = 155.0;
                 break;
 
-            case OUT:
-                this.position = 25.0;
+            case PLACE_HIGH:
+                this.position = 185.0;
                 break;
-        
+
+            case GROUND_CONE:
+                this.position = 176;
+                break;
             default:
                 break;
         }
@@ -48,6 +51,6 @@ public class GoToPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (wrist.getAngle() < position + 2.0 && wrist.getAngle() > position - 2.0 );
+        return (wrist.getAngle() < position + 2.0 && wrist.getAngle() > position - 2.0);
     }
 }

@@ -25,15 +25,15 @@ public class GoToState extends CommandBase {
                 break;
 
             case LOW:
-                this.position = 30.0;
+                this.position = 40.0;
                 break;
 
             case MEDIUM:
-                this.position = 70.0;
+                this.position = 80.0;
                 break;
 
             case HIGH:
-                this.position = 100.0;
+                this.position = 110.0;
                 break;
         
             default:

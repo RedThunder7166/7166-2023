@@ -14,8 +14,8 @@ public class PickupCone extends ParallelCommandGroup {
     public PickupCone (ArmSubsystem arm, WristSubsystem wrist, IntakeSubsystem intake) {
         // addRequirements(arm, wrist, intake);
         addCommands(
-            new GoToState(arm, ArmState.LOW),
-            new GoToPosition(wrist, WristState.HALFWAY),
+            new GoToState(arm, ArmState.LOW),//TODO change this
+            new GoToPosition(wrist, WristState.LOW),
             new Intake(intake)
         );
     }

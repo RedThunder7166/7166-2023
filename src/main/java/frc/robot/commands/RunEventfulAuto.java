@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,8 @@ import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.WristSubsystem.WristState;
 
 public class RunEventfulAuto extends SequentialCommandGroup {
-    public RunEventfulAuto (Swerve swerve, ArmSubsystem arm, WristSubsystem wrist, IntakeSubsystem intake) {
-        List<PathPlannerTrajectory> group = PathPlanner.loadPathGroup("Test 2", new PathConstraints(4, 3));
+    public RunEventfulAuto (Swerve swerve, ArmSubsystem arm, WristSubsystem wrist, IntakeSubsystem intake, String PathName) {
+        List<PathPlannerTrajectory> group = PathPlanner.loadPathGroup(PathName, new PathConstraints(4, 3));
 
         HashMap<String, Command> eventMap = new HashMap<>();
         eventMap.put("extend-arm-1", new GoToState(arm, ArmState.LOW));
@@ -37,12 +38,12 @@ public class RunEventfulAuto extends SequentialCommandGroup {
         eventMap.put("stop-intake", new StopIntake(intake));
         eventMap.put("protect", new ParallelCommandGroup(
             new GoToState(arm, ArmState.INSIDE),
-            new GoToPosition(wrist, WristState.OUT)
+            new GoToPosition(wrist, WristState.TRANSPORT)
         ));
         eventMap.put("score-cube", new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new GoToState(arm, ArmState.MEDIUM),
-                new GoToPosition(wrist, WristState.OUT)
+                new GoToPosition(wrist, WristState.PLACE_MID)
             ),
             new Outtake(intake)
         ));

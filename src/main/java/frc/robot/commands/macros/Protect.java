@@ -12,7 +12,7 @@ public class Protect extends ParallelCommandGroup {
     public Protect (ArmSubsystem arm, WristSubsystem wrist) {
         addCommands(
             new GoToState(arm, ArmState.INSIDE),
-            new GoToPosition(wrist, WristState.HALFWAY)
+            new GoToPosition(wrist, WristState.TRANSPORT)
         );
     }
 }

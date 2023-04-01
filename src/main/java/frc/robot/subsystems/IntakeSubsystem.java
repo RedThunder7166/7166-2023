@@ -10,15 +10,20 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     private TalonFX motor = new TalonFX(Constants.Intake.MOTOR_ID);
 
-    public IntakeSubsystem () {
+    public IntakeSubsystem() {
         motor.configFactoryDefault();
         motor.setInverted(TalonFXInvertType.CounterClockwise);
     }
 
-    public void setPower (double power) {
+    public void setPower(double power) {
         motor.set(TalonFXControlMode.PercentOutput, power);
     }
 
-    public void intake() { setPower(-0.45); }
-    public void outtake() { setPower(0.18); }
+    public void intake() {
+        setPower(-0.45);
+    }
+
+    public void outtake() {
+        setPower(0.4);
+    }
 }
