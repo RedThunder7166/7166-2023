@@ -33,20 +33,20 @@ public class RunEventfulAuto extends SequentialCommandGroup {
         List<PathPlannerTrajectory> group = PathPlanner.loadPathGroup(PathName, new PathConstraints(4, 3));
 
         HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("extend-arm-1", new GoToState(arm, ArmState.LOW));
+        // eventMap.put("extend-arm-1", new GoToState(arm, ArmState.LOW));
         eventMap.put("start-intake", new Intake(intake));
         eventMap.put("stop-intake", new StopIntake(intake));
-        eventMap.put("protect", new ParallelCommandGroup(
-            new GoToState(arm, ArmState.INSIDE),
-            new GoToPosition(wrist, WristState.TRANSPORT)
-        ));
-        eventMap.put("score-cube", new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                new GoToState(arm, ArmState.MEDIUM),
-                new GoToPosition(wrist, WristState.PLACE_MID)
-            ),
-            new Outtake(intake)
-        ));
+        // eventMap.put("protect", new ParallelCommandGroup(
+            // new GoToState(arm, ArmState.INSIDE),
+            // new GoToPosition(wrist, WristState.TRANSPORT)
+        // ));
+        // eventMap.put("score-cube", new SequentialCommandGroup(
+        //     new ParallelCommandGroup(
+        //         new GoToState(arm, ArmState.MEDIUM),
+        //         new GoToPosition(wrist, WristState.PLACE_MID)
+        //     ),
+        //     new Outtake(intake)
+        // ));
 
         addCommands(
             new SwerveAutoBuilder(

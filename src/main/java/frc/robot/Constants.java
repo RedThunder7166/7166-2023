@@ -170,7 +170,7 @@ public final class Constants {
 
     public static final class TeleopSwerve {
         public static final double CREEP_MODE_TRANSLATION_SPEED = 0.1;
-        public static final double CREEP_MODE_ROTATION_SPEED = 0.5;
+        public static final double CREEP_MODE_ROTATION_SPEED = 0.1;
 
     }
 
@@ -188,5 +188,10 @@ public final class Constants {
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
+    public static final class LED {
+        public static final int LEFT_BLINKIN_ID = 1;
+        public static final int RIGHT_BLINKIN_ID = 0;
     }
 }
