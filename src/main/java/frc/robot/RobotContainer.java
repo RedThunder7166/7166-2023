@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -47,7 +48,7 @@ public class RobotContainer {
     /* Operator Contorls */
     private final int wristManual = XboxController.Axis.kLeftY.value;
     private final int armManual = XboxController.Axis.kRightY.value;
-
+    private final JoystickButton wristTest = new JoystickButton(operator, XboxController.Button.kA.value);
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
@@ -57,6 +58,9 @@ public class RobotContainer {
     private final POVButton low = new POVButton(operator, 180);
     private final POVButton medium = new POVButton(operator, 90);
     private final POVButton high = new POVButton(operator, 0);
+    private final JoystickButton CubeLED = new JoystickButton(operator, XboxController.Button.kBack.value);
+    private final JoystickButton ConeLED = new JoystickButton(operator, XboxController.Button.kStart.value);
+
     /* Autonomous Decider */
     private final SendableChooser<String> autoDecider = new SendableChooser<>();
     public enum Location {
@@ -68,15 +72,16 @@ public class RobotContainer {
     private final ArmSubsystem s_Arm = new ArmSubsystem();
     private final WristSubsystem s_Wrist = new WristSubsystem();
     private final IntakeSubsystem s_Intake = new IntakeSubsystem();
+    private final LedSubsystem s_LedSubsystem = new LedSubsystem();
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
 
-        autoDecider.addOption("The most undeniable superficial catastrophic name ever, exist", "Test 1");
+        autoDecider.addOption("Test 1", "Test 1");
 
-
+        CameraServer.startAutomaticCapture();
 
         s_Swerve.setDefaultCommand(
                 new TeleopSwerve(
@@ -118,15 +123,19 @@ public class RobotContainer {
               //  new GoToPosition(s_Wrist, 20),
                 new GoToState(s_Arm, ArmState.LOW)));
 
-        medium.onTrue(
+        medium.onTrue(new SequentialCommandGroup(
               //  new GoToPosition(s_Wrist, 20),
-                new GoToState(s_Arm, ArmState.MEDIUM));
+                new GoToState(s_Arm, ArmState.MEDIUM)
+        ));
 
         high.onTrue(new SequentialCommandGroup(
-              //  new GoToPosition(s_Wrist, 20),
-                new GoToState(s_Arm, ArmState.HIGH)));
+                //  new GoToPosition(s_Wrist, 20),
+                new GoToState(s_Arm, ArmState.HIGH)
+        ));
 
-        // new JoystickButton(operator, XboxController.Button.kY.value).whileTrue(
+
+        wristTest.onTrue(new GoToPosition(s_Wrist, 20.0));
+                        // new JoystickButton(operator, XboxController.Button.kY.value).whileTrue(
         // new GoToPosition(s_Wrist, WristState.OUT)
         // );
 
@@ -135,11 +144,13 @@ public class RobotContainer {
         // );
 
         new JoystickButton(operator, XboxController.Button.kLeftBumper.value).whileTrue(
-
                 new Intake(s_Intake));
 
         new JoystickButton(operator, XboxController.Button.kRightBumper.value).whileTrue(
                 new Outtake(s_Intake));
+
+        ConeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(1), s_LedSubsystem));
+        CubeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(0), s_LedSubsystem));
 
         // new JoystickButton(operator, XboxController.Button.kX.value).whileTrue(
         // new PickupCone(s_Arm, s_Wrist, s_Intake)
@@ -167,5 +178,10 @@ public class RobotContainer {
     public void robotInit() {
         new GoToState(s_Arm, s_Arm.getAngle()).schedule();
 
+    }
+
+    public void disabledInit() {
+        s_LedSubsystem.setLeftBlinkIn(-0.5);
+        s_LedSubsystem.setRightBlinkIn(0.5);
     }
 }
