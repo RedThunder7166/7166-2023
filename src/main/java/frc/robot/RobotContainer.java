@@ -4,6 +4,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -61,7 +62,11 @@ public class RobotContainer {
     private final JoystickButton CubeLED = new JoystickButton(operator, XboxController.Button.kBack.value);
     private final JoystickButton ConeLED = new JoystickButton(operator, XboxController.Button.kStart.value);
 
-    /* Autonomous Decider */
+
+
+
+
+/* Autonomous Decider */
     private final SendableChooser<String> autoDecider = new SendableChooser<>();
     public enum Location {
         LOW, MIDDLE, HIGH, NONE
@@ -79,7 +84,9 @@ public class RobotContainer {
      */
     public RobotContainer() {
 
+        Shuffleboard.getTab("Autonomous").add(autoDecider);
         autoDecider.addOption("Test 1", "Test 1");
+        autoDecider.addOption("Test 2", "Test 2");
 
         CameraServer.startAutomaticCapture();
 
@@ -93,7 +100,7 @@ public class RobotContainer {
 
                 ));
         /* Manual modes */
-         s_Wrist.setDefaultCommand(new ManualWrist(s_Wrist, () -> -operator.getRawAxis(wristManual)));
+         s_Wrist.setDefaultCommand(new ManualWrist(s_Wrist, () -> operator.getRawAxis(wristManual)));
          s_Arm.setDefaultCommand(new Manual(s_Arm, () -> -operator.getRawAxis(armManual)));
 
         s_Intake.setDefaultCommand(
@@ -148,6 +155,7 @@ public class RobotContainer {
 
         new JoystickButton(operator, XboxController.Button.kRightBumper.value).whileTrue(
                 new Outtake(s_Intake));
+
 
         ConeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(1), s_LedSubsystem));
         CubeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(0), s_LedSubsystem));

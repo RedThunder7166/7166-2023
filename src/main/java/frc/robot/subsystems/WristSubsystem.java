@@ -13,6 +13,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -28,7 +29,7 @@ public class WristSubsystem extends SubsystemBase {
         motor.config_kI(0, 0);
         motor.config_kD(0, 0);
         motor.configClosedLoopPeakOutput(0, 0.5);
-        motor.setInverted(TalonFXInvertType.CounterClockwise);
+        motor.setInverted(true);
         motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.configMotionCruiseVelocity(7000);
@@ -43,13 +44,15 @@ public class WristSubsystem extends SubsystemBase {
         dashboard();
     }
 
+
     public void setAngle (double angle) {
+        System.out.println(Utils.angleToTicks(angle)
+        );
         motor.set(
             TalonFXControlMode.MotionMagic,
             Utils.angleToTicks(angle),
             DemandType.ArbitraryFeedForward,
-            Utils.calculateFeedForward(motor.getSelectedSensorPosition())
-        );
+          0);
     }
 
     public double getAngle () {

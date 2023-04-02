@@ -14,4 +14,9 @@ public class Intake extends CommandBase {
     public void execute() {
         intake.intake();
     }
+
+    public void isfinished(){
+        
+
+    }
 }
