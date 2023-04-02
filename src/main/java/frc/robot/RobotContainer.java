@@ -5,9 +5,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -55,13 +57,15 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kY.value);
     /* Operator Buttons */
+    private final JoystickButton normalIntake = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton normalOuttake = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
     private final POVButton inside = new POVButton(operator, 270);// NOTE: This is the DPAD.
     private final POVButton low = new POVButton(operator, 180);
     private final POVButton medium = new POVButton(operator, 90);
     private final POVButton high = new POVButton(operator, 0);
     private final JoystickButton CubeLED = new JoystickButton(operator, XboxController.Button.kBack.value);
     private final JoystickButton ConeLED = new JoystickButton(operator, XboxController.Button.kStart.value);
-
+    private final JoystickButton fastOutake = new JoystickButton(operator, XboxController.Button.kX.value);
 
 
 
@@ -150,16 +154,18 @@ public class RobotContainer {
         // new GoToPosition(s_Wrist, WristState.DOWN)
         // );
 
-        new JoystickButton(operator, XboxController.Button.kLeftBumper.value).whileTrue(
+        normalIntake.whileTrue(
                 new Intake(s_Intake));
 
-        new JoystickButton(operator, XboxController.Button.kRightBumper.value).whileTrue(
+        normalOuttake.whileTrue(
                 new Outtake(s_Intake));
-
 
         ConeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(1), s_LedSubsystem));
         CubeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(0), s_LedSubsystem));
 
+        fastOutake.whileTrue(new RunCommand(()-> {
+                s_Intake.fastOutake();
+        }));
         // new JoystickButton(operator, XboxController.Button.kX.value).whileTrue(
         // new PickupCone(s_Arm, s_Wrist, s_Intake)
         // );

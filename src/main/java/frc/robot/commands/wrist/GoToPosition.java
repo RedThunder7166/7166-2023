@@ -25,7 +25,7 @@ public class GoToPosition extends CommandBase {
                 break;
 
             case LOW:
-                this.position = 70.0;
+                this.position = 77.0;
                 break;
 
             case PLACE_MID:

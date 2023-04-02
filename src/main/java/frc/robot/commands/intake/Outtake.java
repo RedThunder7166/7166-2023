@@ -12,6 +12,6 @@ public class Outtake extends CommandBase {
 
     @Override
     public void execute() {
-        intake.fastOutake();
+        intake.outtake();
     }
 }
