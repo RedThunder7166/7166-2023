@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -8,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +20,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private TalonFX leftMotor = new TalonFX(Constants.Arm.LEFT_MOTOR_ID);
     private TalonFX rightMotor = new TalonFX(Constants.Arm.RIGHT_MOTOR_ID);
+    private DigitalInput ArmZero = new DigitalInput(0);
     public enum ArmState { INSIDE, LOW, MEDIUM, HIGH, NONE };
     private ArmState state = ArmState.LOW;
 
@@ -81,7 +85,18 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void manualControl (double power) {
+        if (power > 0 && ArmZero.get() ){
         leftMotor.set(TalonFXControlMode.PercentOutput, power);
+        } else if( power < 0 && !ArmZero.get() ){
+        leftMotor.set(TalonFXControlMode.PercentOutput, 0);
+        leftMotor.setSelectedSensorPosition(0);
+        } else {
+            leftMotor.set(TalonFXControlMode.PercentOutput, power);
+
+
+
+        }
+        
     }
 
     public void dashboard() {
@@ -90,6 +105,7 @@ public class ArmSubsystem extends SubsystemBase {
         tab.addDouble("Arm Ticks", () -> leftMotor.getSelectedSensorPosition());
         tab.addDouble("Arm Angle", () -> Utils.ticksToAngle( leftMotor.getSelectedSensorPosition() ));
         tab.addString("Arm State", () -> state.name());
+        tab.addBoolean("LimitSwitch", ()-> !ArmZero.get());
     }
 
     @Override

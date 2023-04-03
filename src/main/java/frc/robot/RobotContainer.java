@@ -90,7 +90,7 @@ public class RobotContainer {
 
         Shuffleboard.getTab("Autonomous").add(autoDecider);
         autoDecider.addOption("Test 1", "Test 1");
-        autoDecider.addOption("Test 2", "Test 2");
+        autoDecider.addOption("TwoCubeRight", "TwoCubeRight");
 
         CameraServer.startAutomaticCapture();
 
@@ -140,7 +140,7 @@ public class RobotContainer {
         ));
 
         high.onTrue(new SequentialCommandGroup(
-                //  new GoToPosition(s_Wrist, 20),
+                //  new GoToPosition(s_Wrist, 180),
                 new GoToState(s_Arm, ArmState.HIGH)
         ));
 

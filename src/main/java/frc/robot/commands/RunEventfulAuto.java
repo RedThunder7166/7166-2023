@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.arm.GoToState;
+import frc.robot.commands.intake.FastOuttake;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.intake.Outtake;
 import frc.robot.commands.intake.StopIntake;
@@ -50,11 +51,11 @@ public class RunEventfulAuto extends SequentialCommandGroup {
         eventMap.put("WRIST_GROUND_CONE", new GoToPosition(wrist, WristState.GROUND_CONE));
 
         eventMap.put("INTAKE", new Intake(intake).raceWith(new WaitCommand(.1)));
-        eventMap.put("LONG_INTAKE", new Intake(intake).raceWith(new WaitCommand(5)));
+        eventMap.put("LONG_INTAKE", new Intake(intake).raceWith(new WaitCommand(1)));
 
         eventMap.put("OUTTAKE", new Outtake(intake).raceWith(new WaitCommand(.4)));
-        eventMap.put("LONG_OUTTAKE", new Outtake(intake).raceWith(new WaitCommand(5)));
-
+        eventMap.put("LONG_OUTTAKE", new Outtake(intake).raceWith(new WaitCommand(1)));
+        eventMap.put("FAST_OUTTAKE", new FastOuttake(intake).raceWith(new WaitCommand(.2)));
         eventMap.put("STOP_INTAKE", new StopIntake(intake));
 
         // eventMap.put("score-cube", new SequentialCommandGroup(

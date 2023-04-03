@@ -33,7 +33,7 @@ public class GoToState extends CommandBase {
                 break;
 
             case HIGH:
-                this.position = 110.0;
+                this.position = 120.0;
                 break;
         
             default:
