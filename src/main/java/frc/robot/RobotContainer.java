@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -119,17 +120,19 @@ public class RobotContainer {
 
     public void controllerLoop(){
         double wristAxis = operator.getRawAxis(wristManual);
-        if (Math.abs(wristAxis) > 0.1) {
+        if (Math.abs(wristAxis) > 0.25) {
                 s_ManualWristCommand.schedule();
-        } else {
+        } else if (s_ManualWristCommand.isScheduled()) {
                 s_ManualWristCommand.cancel();
+                s_Wrist.stopMotor();
         }
 
         double armAxis = operator.getRawAxis(armManual);
-        if (Math.abs(armAxis) > 0.1) {
+        if (Math.abs(armAxis) > 0.25) {
                 s_ManualArmCommand.schedule();
-        } else {
+        } else if (s_ManualArmCommand.isScheduled()) {
                 s_ManualArmCommand.cancel();
+                s_Arm.stopMotor();
         }
     }
 
@@ -154,13 +157,13 @@ public class RobotContainer {
                 new GoToState(s_Arm, ArmState.LOW)));
 
         medium.onTrue(new SequentialCommandGroup(
-              //  new GoToPosition(s_Wrist, 20),
+              // new GoToPosition(s_Wrist, 20),
                 new GoToState(s_Arm, ArmState.MEDIUM)
         ));
 
         high.onTrue(new SequentialCommandGroup(
-                //  new GoToPosition(s_Wrist, 180),
-                new GoToState(s_Arm, ArmState.HIGH)
+                new GoToState(s_Arm, ArmState.HIGH),
+                new GoToPosition(s_Wrist, 180)
         ));
 
 
@@ -209,8 +212,8 @@ public class RobotContainer {
     }
 
     public void robotInit() {
-        new GoToState(s_Arm, s_Arm.getAngle()).schedule();
-
+        s_Arm.stopMotor();
+        s_Wrist.stopMotor();
     }
 
     public void disabledInit() {

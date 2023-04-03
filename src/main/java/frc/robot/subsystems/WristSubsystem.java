@@ -65,8 +65,11 @@ public class WristSubsystem extends SubsystemBase {
         } else if (power < 0 && topSwitch.get()) {
             motor.set(TalonFXControlMode.PercentOutput, power);
         } else {
-            motor.set(TalonFXControlMode.PercentOutput, 0);
+            stopMotor();
         }
+    }
+    public void stopMotor (){
+        motor.set(TalonFXControlMode.PercentOutput, 0);
     }
 
     public void dashboard () {

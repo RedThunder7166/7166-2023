@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     s_Swerve = new Swerve();
-    m_robotContainer.robotInit();
   }
 
   /**
@@ -80,7 +79,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     s_Swerve.flipGyro();
-    // This makes sure that the autonomous stops running when
+    m_robotContainer.robotInit();
+       // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.

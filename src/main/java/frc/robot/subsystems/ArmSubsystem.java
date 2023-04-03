@@ -92,11 +92,11 @@ public class ArmSubsystem extends SubsystemBase {
         leftMotor.setSelectedSensorPosition(0);
         } else {
             leftMotor.set(TalonFXControlMode.PercentOutput, power);
-
-
-
         }
-        
+    }
+
+    public void stopMotor(){
+        leftMotor.set(TalonFXControlMode.PercentOutput, 0);
     }
 
     public void dashboard() {
