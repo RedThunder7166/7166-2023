@@ -5,11 +5,11 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class Manual extends CommandBase {
+public class ManualArm extends CommandBase {
     private ArmSubsystem arm;
     private DoubleSupplier power;
 
-    public Manual (ArmSubsystem arm, DoubleSupplier power) {
+    public ManualArm (ArmSubsystem arm, DoubleSupplier power) {
         this.arm = arm;
         addRequirements(arm);
 

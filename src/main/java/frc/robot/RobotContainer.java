@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.commands.arm.GoToState;
-import frc.robot.commands.arm.Manual;
+import frc.robot.commands.arm.ManualArm;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.intake.Outtake;
 import frc.robot.commands.intake.StopIntake;
@@ -83,6 +83,9 @@ public class RobotContainer {
     private final IntakeSubsystem s_Intake = new IntakeSubsystem();
     private final LedSubsystem s_LedSubsystem = new LedSubsystem();
 
+    private final Command s_ManualWristCommand = new ManualWrist(s_Wrist, () -> operator.getRawAxis(wristManual));
+    private final Command s_ManualArmCommand = new ManualArm(s_Arm, () -> -operator.getRawAxis(armManual));
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -104,14 +107,30 @@ public class RobotContainer {
 
                 ));
         /* Manual modes */
-         s_Wrist.setDefaultCommand(new ManualWrist(s_Wrist, () -> operator.getRawAxis(wristManual)));
-         s_Arm.setDefaultCommand(new Manual(s_Arm, () -> -operator.getRawAxis(armManual)));
+        // s_Wrist.setDefaultCommand(new ManualWrist(s_Wrist, () -> operator.getRawAxis(wristManual)));
+        // s_Arm.setDefaultCommand(new ManualArm(s_Arm, () -> -operator.getRawAxis(armManual)));
 
         s_Intake.setDefaultCommand(
                 new StopIntake(s_Intake));
 
         // Configure the button bindings
         configureButtonBindings();
+    }
+
+    public void controllerLoop(){
+        double wristAxis = operator.getRawAxis(wristManual);
+        if (Math.abs(wristAxis) > 0.1) {
+                s_ManualWristCommand.schedule();
+        } else {
+                s_ManualWristCommand.cancel();
+        }
+
+        double armAxis = operator.getRawAxis(armManual);
+        if (Math.abs(armAxis) > 0.1) {
+                s_ManualArmCommand.schedule();
+        } else {
+                s_ManualArmCommand.cancel();
+        }
     }
 
     /**
