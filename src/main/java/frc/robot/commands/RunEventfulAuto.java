@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.Drive.AutoBalance;
 import frc.robot.commands.arm.GoToState;
 import frc.robot.commands.intake.FastOuttake;
 import frc.robot.commands.intake.Intake;
@@ -32,10 +33,10 @@ import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.WristSubsystem.WristState;
 
 public class RunEventfulAuto extends SequentialCommandGroup {
+    public static HashMap<String, Command> eventMap = new HashMap<>();
     public RunEventfulAuto (Swerve swerve, ArmSubsystem arm, WristSubsystem wrist, IntakeSubsystem intake, String PathName) {
-        List<PathPlannerTrajectory> group = PathPlanner.loadPathGroup(PathName, new PathConstraints(4, 3));
+        List<PathPlannerTrajectory> group = PathPlanner.loadPathGroup(PathName, new PathConstraints(3, 3));
 
-        HashMap<String, Command> eventMap = new HashMap<>();
         eventMap.put("ARM_CUBE_MED", new GoToState(arm, 56));
 
         eventMap.put("ARM_IN", new GoToState(arm, ArmState.INSIDE));
@@ -49,7 +50,7 @@ public class RunEventfulAuto extends SequentialCommandGroup {
         eventMap.put("WRIST_PLACE_MID", new GoToPosition(wrist, WristState.PLACE_MID));
         eventMap.put("WRIST_PLACE_HIGH", new GoToPosition(wrist, WristState.PLACE_HIGH));
         eventMap.put("WRIST_GROUND_CONE", new GoToPosition(wrist, WristState.GROUND_CONE));
-
+        eventMap.put("BALANCE_AUTO", new AutoBalance(swerve));
         eventMap.put("INTAKE", new Intake(intake).raceWith(new WaitCommand(.1)));
         eventMap.put("LONG_INTAKE", new Intake(intake).raceWith(new WaitCommand(1)));
 

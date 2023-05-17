@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.Drive.AutoBalance;
 import frc.robot.commands.arm.GoToState;
 import frc.robot.commands.arm.ManualArm;
 import frc.robot.commands.intake.Intake;
@@ -52,11 +53,12 @@ public class RobotContainer {
     /* Operator Contorls */
     private final int wristManual = XboxController.Axis.kLeftY.value;
     private final int armManual = XboxController.Axis.kRightY.value;
-    private final JoystickButton wristTest = new JoystickButton(operator, XboxController.Button.kA.value);
+  //  private final JoystickButton wristTest = new JoystickButton(operator, XboxController.Button.kA.value);
+    private final JoystickButton GyroBalance = new JoystickButton(operator, XboxController.Button.kA.value);
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kY.value);
+    private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     /* Operator Buttons */
     private final JoystickButton normalIntake = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
     private final JoystickButton normalOuttake = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
@@ -94,7 +96,10 @@ public class RobotContainer {
 
         Shuffleboard.getTab("Autonomous").add(autoDecider);
         autoDecider.addOption("Test 1", "Test 1");
+        autoDecider.addOption("Test 6", "Test 6");
         autoDecider.addOption("TwoCubeRight", "TwoCubeRight");
+        autoDecider.addOption("TwoCubeLeft", "TwoCubeLeft");
+        autoDecider.addOption("CenterCharge", "CenterPath");
 
         CameraServer.startAutomaticCapture();
 
@@ -167,7 +172,7 @@ public class RobotContainer {
         ));
 
 
-        wristTest.onTrue(new GoToPosition(s_Wrist, 20.0));
+     //   wristTest.onTrue(new GoToPosition(s_Wrist, 20.0));
                         // new JoystickButton(operator, XboxController.Button.kY.value).whileTrue(
         // new GoToPosition(s_Wrist, WristState.OUT)
         // );
@@ -187,6 +192,8 @@ public class RobotContainer {
 
         fastOutake.whileTrue(new RunCommand(()-> {
                 s_Intake.fastOutake();
+
+        GyroBalance.onTrue(new AutoBalance(s_Swerve));
         }));
         // new JoystickButton(operator, XboxController.Button.kX.value).whileTrue(
         // new PickupCone(s_Arm, s_Wrist, s_Intake)

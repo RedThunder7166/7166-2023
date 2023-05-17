@@ -85,15 +85,15 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void manualControl (double power) {
-        if (power > 0 && ArmZero.get() ){
+    //    if (power > 0 && ArmZero.get() ){
         leftMotor.set(TalonFXControlMode.PercentOutput, power);
-        } else if( power < 0 && !ArmZero.get() ){
-        leftMotor.set(TalonFXControlMode.PercentOutput, 0);
-        leftMotor.setSelectedSensorPosition(0);
-        } else {
-            leftMotor.set(TalonFXControlMode.PercentOutput, power);
-        }
-    }
+        // } else if( power < 0 && !ArmZero.get() ){
+        // leftMotor.set(TalonFXControlMode.PercentOutput, 0);
+        // leftMotor.setSelectedSensorPosition(0);
+        // } else {
+        //     leftMotor.set(TalonFXControlMode.PercentOutput, power);
+        // }
+}
 
     public void stopMotor(){
         leftMotor.set(TalonFXControlMode.PercentOutput, 0);
