@@ -20,14 +20,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void intake() {
-        setPower(-0.45);
+        setPower(-0.6);
     }
 
     public void outtake() {
-        setPower(0.4);
+        setPower(0.6);
     
     }
-    public void fastOutake(){//TODO new command
+    public void fastOutake(){
 
         setPower(.8);
     }

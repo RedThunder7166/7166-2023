@@ -37,8 +37,8 @@ public class AutoBalance extends CommandBase {
 
     this.currentAngle = swerve.getPitch();
 
-    double kP = 0.03;
-    drivePower = -0.4;
+    // double kP = 0.06;  // 0.03
+    drivePower = -0.5;
     //kP * currentAngle;
     // drivePower = Math.min(currentAngle, 0.0);
     drivePower = Math.copySign(drivePower, currentAngle);

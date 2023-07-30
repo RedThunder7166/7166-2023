@@ -18,6 +18,7 @@ public class ManualArm extends CommandBase {
 
     @Override
     public void execute() {
-        this.arm.manualControl(power.getAsDouble() * 0.4);
+        this.arm.manualControl(power.getAsDouble() * 0.4 + ArmSubsystem.Utils.calculateFeedForward(this.arm.GetMotorP()));
+        
     }
 }

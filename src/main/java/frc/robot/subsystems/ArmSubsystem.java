@@ -10,7 +10,9 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,10 +25,10 @@ public class ArmSubsystem extends SubsystemBase {
     private DigitalInput ArmZero = new DigitalInput(0);
     public enum ArmState { INSIDE, LOW, MEDIUM, HIGH, NONE };
     private ArmState state = ArmState.LOW;
-
+  
     public ArmSubsystem () {
         leftMotor.configFactoryDefault();
-        leftMotor.config_kP(0, 0.5);
+        leftMotor.config_kP(0, 0.05);
         leftMotor.config_kI(0, 0);
         leftMotor.config_kD(0, 0);
         leftMotor.configClosedLoopPeakOutput(0, 0.4);
@@ -86,7 +88,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void manualControl (double power) {
     //    if (power > 0 && ArmZero.get() ){
-        leftMotor.set(TalonFXControlMode.PercentOutput, power);
+        leftMotor.set(
+            TalonFXControlMode.PercentOutput,
+            power
+        );
+
+        
         // } else if( power < 0 && !ArmZero.get() ){
         // leftMotor.set(TalonFXControlMode.PercentOutput, 0);
         // leftMotor.setSelectedSensorPosition(0);
@@ -108,6 +115,10 @@ public class ArmSubsystem extends SubsystemBase {
         tab.addBoolean("LimitSwitch", ()-> !ArmZero.get());
     }
 
+    public double GetMotorP (){
+        return leftMotor.getSelectedSensorPosition();
+    }
+
     @Override
     public void periodic() {
         // determine arm state
@@ -126,6 +137,9 @@ public class ArmSubsystem extends SubsystemBase {
     
 
     public static class Utils {
+       static ShuffleboardTab tab = Shuffleboard.getTab("Arm");
+       static GenericEntry ArmPIDEntry = tab.add("ArmPID #", 1).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
+    
         static ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);//TODO needs to be tuned
 
         public static double angleToTicks (double angle) { return (angle * ((Constants.Arm.GEAR_RATIO * 2048) / 360)); }
@@ -133,10 +147,15 @@ public class ArmSubsystem extends SubsystemBase {
         public static double ticksToAngle (double ticks) { return (ticks * 360) / (Constants.Arm.GEAR_RATIO * 2048); }
 
         public static double calculateFeedForward (double ticks) {
-            return Constants.Arm.FEED_FORWARD * Math.cos(//TODO double check on Sin Cos difference, I think this should be sin-Josef
-                Math.toRadians(ticksToAngle(ticks))
-            );
-            // return armFeedforward.calculate(position, velocity);
+            double angle = ticksToAngle(ticks);
+            double radians = Math.toRadians(angle);
+            // return Constants.Arm.FEED_FORWARD * Math.sin(radians);
+
+          //  System.out.println(ArmPIDEntry.getDouble(.2));
+                return ArmPIDEntry.getDouble(.2) * Math.sin(.075075);
+                    //Math.toRadians(ticksToAngle(ticks))
+            //    );
+            //return armFeedforward.calculate(position, velocity);
         }
     }
     

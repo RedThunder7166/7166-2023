@@ -46,8 +46,7 @@ public class WristSubsystem extends SubsystemBase {
 
 
     public void setAngle (double angle) {
-        System.out.println(Utils.angleToTicks(angle)
-        );
+        System.out.println(Utils.angleToTicks(angle));
         motor.set(
             TalonFXControlMode.MotionMagic,
             Utils.angleToTicks(angle),
@@ -60,13 +59,15 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void manualControl (double power) {
-        if (power > 0 && bottomSwitch.get()) {
-            motor.set(TalonFXControlMode.PercentOutput, power);
-        } else if (power < 0 && topSwitch.get()) {
-            motor.set(TalonFXControlMode.PercentOutput, power);
-        } else {
-            stopMotor();
-        }
+        // if (power > 0 && bottomSwitch.get()) {
+        //     motor.set(TalonFXControlMode.PercentOutput, power);
+        // } else if (power < 0 && topSwitch.get()) {
+        //     motor.set(TalonFXControlMode.PercentOutput, power);
+        // } else {
+        //     stopMotor();
+        // }
+
+        motor.set(TalonFXControlMode.PercentOutput, power);
     }
     public void stopMotor (){
         motor.set(TalonFXControlMode.PercentOutput, 0);

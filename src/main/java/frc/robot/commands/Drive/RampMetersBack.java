@@ -27,7 +27,7 @@ public class RampMetersBack extends CommandBase {
     targetMetersX = targetX;
     targetMetersY = targetY;
     targetRotation = targetRot;
-    feedForward =-3.5;
+    feedForward =-3.7; // 3.5 orgin, reconfirm this through testing
 
     addRequirements(swerve);
   }
@@ -62,7 +62,7 @@ public class RampMetersBack extends CommandBase {
     // System.out.println(y_error);
     // System.out.println(rot_error);
 
-    double x_kP = 4.3;
+    double x_kP = 4.3; // Needs to be adjusted 
     double y_kP = 4.3;
     double rot_kP = 0.1;
 

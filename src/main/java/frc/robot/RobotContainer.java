@@ -59,6 +59,7 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+ 
     /* Operator Buttons */
     private final JoystickButton normalIntake = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
     private final JoystickButton normalOuttake = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
@@ -84,7 +85,7 @@ public class RobotContainer {
     private final ArmSubsystem s_Arm = new ArmSubsystem();
     private final WristSubsystem s_Wrist = new WristSubsystem();
     private final IntakeSubsystem s_Intake = new IntakeSubsystem();
-    private final LedSubsystem s_LedSubsystem = new LedSubsystem();
+    private final LEDSubsystem s_LedSubsystem = new LEDSubsystem();
 
     private final Command s_ManualWristCommand = new ManualWrist(s_Wrist, () -> operator.getRawAxis(wristManual));
     private final Command s_ManualArmCommand = new ManualArm(s_Arm, () -> -operator.getRawAxis(armManual));
@@ -103,6 +104,7 @@ public class RobotContainer {
 
         CameraServer.startAutomaticCapture();
 
+        s_Swerve.setInitialGyroAngle();
         s_Swerve.setDefaultCommand(
                 new TeleopSwerve(
                         s_Swerve,
@@ -119,8 +121,11 @@ public class RobotContainer {
         s_Intake.setDefaultCommand(
                 new StopIntake(s_Intake));
 
+
         // Configure the button bindings
         configureButtonBindings();
+
+        s_LedSubsystem.defaultColor.schedule();
     }
 
     public void controllerLoop(){
@@ -134,12 +139,13 @@ public class RobotContainer {
 
         double armAxis = operator.getRawAxis(armManual);
         if (Math.abs(armAxis) > 0.25) {
-                s_ManualArmCommand.schedule();
+             s_ManualArmCommand.schedule();
         } else if (s_ManualArmCommand.isScheduled()) {
                 s_ManualArmCommand.cancel();
                 s_Arm.stopMotor();
         }
-    }
+}
+
 
     /**
      * Use this method to define your button->command mappings. Buttons can be
@@ -150,16 +156,19 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
         inside.onTrue(new SequentialCommandGroup(
-              //  new GoToPosition(s_Wrist, 20),
-                new GoToState(s_Arm, ArmState.INSIDE)));
+               // new GoToPosition(s_Wrist, 20),
+                new GoToState(s_Arm, ArmState.INSIDE)
+                ));
 
         low.onTrue(new SequentialCommandGroup(
               //  new GoToPosition(s_Wrist, 20),
-                new GoToState(s_Arm, ArmState.LOW)));
+                new GoToState(s_Arm, ArmState.LOW)
+                ));
 
         medium.onTrue(new SequentialCommandGroup(
               // new GoToPosition(s_Wrist, 20),
@@ -167,8 +176,8 @@ public class RobotContainer {
         ));
 
         high.onTrue(new SequentialCommandGroup(
-                new GoToState(s_Arm, ArmState.HIGH),
-                new GoToPosition(s_Wrist, 180)
+                new GoToState(s_Arm, ArmState.HIGH)
+             //   new GoToPosition(s_Wrist, 180)
         ));
 
 
@@ -187,8 +196,8 @@ public class RobotContainer {
         normalOuttake.whileTrue(
                 new Outtake(s_Intake));
 
-        ConeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(1), s_LedSubsystem));
-        CubeLED.onTrue(new InstantCommand(() -> s_LedSubsystem.setBoth(0), s_LedSubsystem));
+        ConeLED.onTrue(s_LedSubsystem.solidYellow);
+        CubeLED.onTrue(s_LedSubsystem.solidPurple);
 
         fastOutake.whileTrue(new RunCommand(()-> {
                 s_Intake.fastOutake();
@@ -221,10 +230,12 @@ public class RobotContainer {
     public void robotInit() {
         s_Arm.stopMotor();
         s_Wrist.stopMotor();
+        s_LedSubsystem.defaultColor.schedule();
+
     }
 
     public void disabledInit() {
-        s_LedSubsystem.setLeftBlinkIn(-0.5);
-        s_LedSubsystem.setRightBlinkIn(0.5);
+        s_LedSubsystem.defaultColor.schedule();
+
     }
 }

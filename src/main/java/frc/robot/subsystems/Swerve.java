@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,12 +22,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public Pigeon2 gyro;
+    public WPI_Pigeon2 gyro;
     private double teleopTranslationSpeed = 1;
     private double teleopRotationSpeed = 1;
+    private double initialGryoAngle;
 
     public Swerve() {
-        gyro = new Pigeon2(Constants.Swerve.pigeonID);
+        gyro = new WPI_Pigeon2(Constants.Swerve.pigeonID);
         gyro.configFactoryDefault();
         zeroGyro();
 
@@ -51,19 +53,31 @@ public class Swerve extends SubsystemBase {
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                        translation.getX(),
-                        translation.getY(),
-                        rotation,
+                        translation.getX()/5, // /5 in to fifth speed, adjust as needed
+                        translation.getY()/5,
+                        rotation/5,//TODO this needs to be replaced before we do another event thing, that would be bad
                         getYaw())
                         : new ChassisSpeeds(
-                                translation.getX(),
-                                translation.getY(),
-                                rotation));
+                                translation.getX()/5,
+                                translation.getY()/5,
+                                rotation/5));
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
+    }
+
+    public void setInitialGyroAngle() {
+        initialGryoAngle = getAngle();
+        SmartDashboard.putNumber("InitialGyroAngle", initialGryoAngle);
+
+    }
+    public double getInitialGyroAngle(){
+        return initialGryoAngle;
+    }
+    public double getGyroAngleError(){
+        return initialGryoAngle - getAngle();
     }
 
     /* Used by SwerveControllerCommand in Auto */
@@ -108,11 +122,6 @@ public class Swerve extends SubsystemBase {
 
     }
 
-    public Rotation2d getYaw() {
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-                : Rotation2d.fromDegrees(gyro.getYaw());
-    }
-
     public void resetModulesToAbsolute() {
         for (SwerveModule mod : mSwerveMods) {
             mod.resetToAbsolute();
@@ -149,14 +158,22 @@ public class Swerve extends SubsystemBase {
         teleopRotationSpeed = 1;
     }
 
+    public Rotation2d getYaw() {
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
+                : Rotation2d.fromDegrees(gyro.getYaw());
+    }
     public double getPitch() {
         return -gyro.getPitch();
+    }
+    public double getAngle(){ // TODO: do the same thing with invertGyro constant as getYaw (maybe idk)
+        return gyro.getAngle();
     }
 
     @Override
     public void periodic() {
         swerveOdometry.update(getYaw(), getModulePositions());
         SmartDashboard.putNumber("GyroPitch", -gyro.getPitch());
+        SmartDashboard.putNumber("GyroAngle", getAngle());
         for (SwerveModule mod : mSwerveMods) {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());

@@ -88,9 +88,10 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 3.0; // TODO: This must be tuned to specific robot
+        public static final double maxSpeed = .1; // TODO: This must be tuned to specific robot
+        //TODO changed from 3 to .1, ADJUST AS IT NEEDS TO BE, DONT FORGET THIS, PLEASE
         /** Radians per Second */
-        public static final double maxAngularVelocity = 5.0; // TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = .1; // TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
@@ -159,7 +160,7 @@ public final class Constants {
         public static final int LEFT_MOTOR_ID = 26;
         public static final int RIGHT_MOTOR_ID = 25;
 
-        public static final double FEED_FORWARD = 0.2; // 0.09
+        public static final double FEED_FORWARD = 0.075075 ; //.075075 
         public static final double GEAR_RATIO = 144.0;
 
         public static final double HIGH_SETPOINT = 96.0;
@@ -173,6 +174,7 @@ public final class Constants {
         public static final double CREEP_MODE_ROTATION_SPEED = 0.2;
 
     }
+
 
     public static final class AutoConstants { // TODO: The below constants are used in the example auto, and must be
                                               // tuned to specific robot
@@ -191,7 +193,7 @@ public final class Constants {
     }
 
     public static final class LED {
-        public static final int LEFT_BLINKIN_ID = 1;
-        public static final int RIGHT_BLINKIN_ID = 0;
+        public static final int LEFT_BLINKIN_ID = 0;
+        // public static final int RIGHT_BLINKIN_ID = 1;
     }
 }
