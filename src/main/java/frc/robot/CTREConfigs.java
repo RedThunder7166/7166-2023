@@ -34,7 +34,8 @@ public final class CTREConfigs {
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
             Constants.Swerve.driveEnableCurrentLimit, 
             Constants.Swerve.driveContinuousCurrentLimit, 
-            Constants.Swerve.drivePeakCurrentLimit, 
+            Constants.Swerve.
+            drivePeakCurrentLimit, 
             Constants.Swerve.drivePeakCurrentDuration);
 
         swerveDriveFXConfig.slot0.kP = Constants.Swerve.driveKP;

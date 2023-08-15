@@ -5,16 +5,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.commands.Drive.AutoBalance;
 import frc.robot.commands.arm.GoToState;
@@ -22,14 +19,10 @@ import frc.robot.commands.arm.ManualArm;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.intake.Outtake;
 import frc.robot.commands.intake.StopIntake;
-import frc.robot.commands.macros.PickupCone;
-import frc.robot.commands.macros.PlaceCone;
-import frc.robot.commands.macros.Protect;
-import frc.robot.commands.wrist.GoToPosition;
+
 import frc.robot.commands.wrist.ManualWrist;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
-import frc.robot.subsystems.WristSubsystem.WristState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -58,7 +51,7 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+//     private final JoystickButton creepModeButton = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
  
     /* Operator Buttons */
     private final JoystickButton normalIntake = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
@@ -144,6 +137,13 @@ public class RobotContainer {
                 s_ManualArmCommand.cancel();
                 s_Arm.stopMotor();
         }
+
+        // System.out.println(driver.getRawAxis(XboxController.Axis.kRightTrigger.value));
+        if (driver.getRawAxis(XboxController.Axis.kRightTrigger.value) >= 1) {
+                s_Swerve.enableCreepMode();
+        } else if (s_Swerve.isCreepMode()) {
+                s_Swerve.disableCreepMode();
+        }
 }
 
 
@@ -199,6 +199,11 @@ public class RobotContainer {
         ConeLED.onTrue(s_LedSubsystem.solidYellow);
         CubeLED.onTrue(s_LedSubsystem.solidPurple);
 
+        // ConeLED.onTrue(new InstantCommand(s_LedSubsystem::increaseOutput));
+        // CubeLED.onTrue(new InstantCommand(s_LedSubsystem::decreaseOutput));
+        // ConeLED.whileTrue(new DelayedRunCommand(0.5, s_LedSubsystem::increaseOutput, true));
+        // CubeLED.whileTrue(new DelayedRunCommand(0.5, s_LedSubsystem::decreaseOutput, true));
+
         fastOutake.whileTrue(new RunCommand(()-> {
                 s_Intake.fastOutake();
 
@@ -212,8 +217,8 @@ public class RobotContainer {
         // new PlaceCone(s_Arm, s_Wrist, null)
         // );
 
-        creepModeButton.onTrue(new InstantCommand(() -> s_Swerve.enableCreepMode()));
-        creepModeButton.onFalse(new InstantCommand(() -> s_Swerve.disableCreepMode()));
+        // creepModeButton.onTrue(new InstantCommand(() -> s_Swerve.enableCreepMode()));
+        // creepModeButton.onFalse(new InstantCommand(() -> s_Swerve.disableCreepMode()));
 
     }
 

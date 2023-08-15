@@ -53,14 +53,14 @@ public class Swerve extends SubsystemBase {
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                        translation.getX()/5, // /5 in to fifth speed, adjust as needed
-                        translation.getY()/5,
-                        rotation/5,//TODO this needs to be replaced before we do another event thing, that would be bad
+                        translation.getX(), // /5 in to fifth speed, adjust as needed
+                        translation.getY(),
+                        rotation,//TODO this needs to be replaced before we do another event thing, that would be bad
                         getYaw())
                         : new ChassisSpeeds(
-                                translation.getX()/5,
-                                translation.getY()/5,
-                                rotation/5));
+                                translation.getX(),
+                                translation.getY(),
+                                rotation));
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for (SwerveModule mod : mSwerveMods) {
@@ -156,6 +156,10 @@ public class Swerve extends SubsystemBase {
     public void disableCreepMode() {
         teleopTranslationSpeed = 1;
         teleopRotationSpeed = 1;
+    }
+
+    public boolean isCreepMode() {
+        return teleopTranslationSpeed == Constants.TeleopSwerve.CREEP_MODE_TRANSLATION_SPEED;
     }
 
     public Rotation2d getYaw() {

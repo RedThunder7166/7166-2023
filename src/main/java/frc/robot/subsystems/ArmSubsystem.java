@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import javax.lang.model.util.ElementScanner14;
 
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;

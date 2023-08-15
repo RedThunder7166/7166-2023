@@ -53,9 +53,9 @@ public final class Constants {
         public static final double anglePeakCurrentDuration = 0.1;
         public static final boolean angleEnableCurrentLimit = true;
 
-        public static final int driveContinuousCurrentLimit = 35;
+        public static final int driveContinuousCurrentLimit = 30;
         public static final int drivePeakCurrentLimit = 60;
-        public static final double drivePeakCurrentDuration = 0.1;
+        public static final double drivePeakCurrentDuration = 10;
         public static final boolean driveEnableCurrentLimit = true;
 
         /*
@@ -63,8 +63,8 @@ public final class Constants {
          * loop driving.
          * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc
          */
-        public static final double openLoopRamp = 0.25;
-        public static final double closedLoopRamp = 0.0;
+        public static final double openLoopRamp = 0.10;// .25
+        public static final double closedLoopRamp = 0.1;
 
         /* Angle Motor PID Values */
         public static final double angleKP = chosenModule.angleKP;
@@ -88,10 +88,10 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = .1; // TODO: This must be tuned to specific robot
+        public static final double maxSpeed = 3; // TODO: This must be tuned to specific robot
         //TODO changed from 3 to .1, ADJUST AS IT NEEDS TO BE, DONT FORGET THIS, PLEASE
         /** Radians per Second */
-        public static final double maxAngularVelocity = .1; // TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 4; // TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralMode angleNeutralMode = NeutralMode.Coast;

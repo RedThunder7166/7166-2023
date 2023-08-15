@@ -24,7 +24,10 @@ public class LEDSubsystem extends SubsystemBase {
   public InstantCommand solidYellow;
   public InstantCommand solidPurple;
   public InstantCommand strobeWhite;
+  public InstantCommand sparkle12;
+  public InstantCommand sparkle21;
 
+  public double output = 1;
   
   ShuffleboardTab tab = Shuffleboard.getTab("LED");
   // GenericEntry lednumberEntry = tab.add("LED #", 1).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
@@ -35,7 +38,10 @@ public class LEDSubsystem extends SubsystemBase {
     rainbow = new InstantCommand(() -> setBlinkins(-0.89), this);
     solidYellow = new InstantCommand(() -> setBlinkins(0.69), this);
     solidPurple = new InstantCommand(() -> setBlinkins(0.91), this);
-    strobeWhite = new InstantCommand(() -> setBlinkins(-0.05), this); 
+    strobeWhite = new InstantCommand(() -> setBlinkins(-0.05), this);
+
+    sparkle12 = new InstantCommand(() -> setBlinkins(0.37), this);
+    sparkle21 = new InstantCommand(() -> setBlinkins(0.39), this);
   
   }
 
@@ -43,8 +49,24 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {
     
     // setBlinkins(lednumberEntry.getDouble(1));
+    // System.out.println(output / 100);
+    // setBlinkins(output / 100);
 
   }
+
+  public void increaseOutput(){
+    double new_output = output + 2;
+    if (new_output > 99) {
+      new_output = 99;
+    }
+    output = new_output;
+  }
+  public void decreaseOutput(){
+    double new_output = output - 2;
+    if (new_output < -99) {
+      new_output = -99;
+    }
+    output = new_output;  }
 
 
   public void setLeftBlinkin(double speed) {
